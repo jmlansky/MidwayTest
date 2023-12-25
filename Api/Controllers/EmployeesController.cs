@@ -1,9 +1,11 @@
 ﻿using Api.Dtos;
 using Api.Requests;
 using Api.Responses;
+using Auth.Contracts;
 using Core;
 using Helpers;
 using Helpers.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Contracts;
 
@@ -15,14 +17,15 @@ namespace Api.Controllers
     {
 
         private readonly IEmployeesService _usuariosService;
+
         private readonly IHelpers _helpers;
         public EmployeesController(IHelpers helpers, IEmployeesService usuariosService)
         {
             _usuariosService = usuariosService;
-            _helpers = helpers;
+            _helpers = helpers;            
         }
 
-
+        
         [HttpGet("birthday/{upn}")]
         public async Task<IActionResult> Birthday(string upn)
         {
@@ -49,6 +52,7 @@ namespace Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Get()
         {
             var result = _usuariosService.Get();
