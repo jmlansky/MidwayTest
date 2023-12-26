@@ -17,13 +17,13 @@ namespace Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
+        public IActionResult LoginAsync([FromBody] LoginRequest request)
         {
             var isValid = _authService.ValidateCredentials(request.Username, request.Password);
 
             if (!isValid)
             {
-                return Unauthorized();
+                return Unauthorized();  
             }
 
             //var token = await _authService.GenerateJwtTokenAsync(request.Username);

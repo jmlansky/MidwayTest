@@ -33,7 +33,7 @@ namespace Api.Controllers
             if (string.IsNullOrEmpty(mensaje))
                 return NotFound($"{Messages.ERROR_EMPLOYEE_NOT_FOUND}: {upn}");
 
-            return Ok(new BirthdayMessageResponse() { Mensaje = mensaje });
+            return Ok(new BirthdayMessageResponse() { Message = mensaje });
         }
 
         [HttpGet("birthday/team")]

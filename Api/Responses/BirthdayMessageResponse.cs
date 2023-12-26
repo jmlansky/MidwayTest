@@ -2,6 +2,6 @@
 {
     public class BirthdayMessageResponse
     {
-        public string Mensaje { get; set; }
+        public string Message { get; set; }
     }
 }
