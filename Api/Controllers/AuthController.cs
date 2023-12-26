@@ -26,7 +26,8 @@ namespace Api.Controllers
                 return Unauthorized();
             }
 
-            var token = await _authService.GenerateJwtTokenAsync(request.Username);
+            //var token = await _authService.GenerateJwtTokenAsync(request.Username);
+            var token = _authService.GenerateJwtToken(request.Username);
 
             return Ok(new { token });
         }

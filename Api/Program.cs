@@ -3,17 +3,23 @@ using Auth.Contracts;
 using Helpers;
 using Helpers.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Web;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Repositories;
 using Repositories.Contracts;
 using Services;
 using Services.Contracts;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 builder.Services.AddScoped<IEmployeesRepository, EmployeesRepository>();
@@ -24,16 +30,16 @@ var secretKey = builder.Configuration.GetSection("API_SECRET").Value;
 var issuer = "me";
 var audience = "everyone";
 
-//builder.Services.AddScoped<IAuthService>(provider =>
-//{
-//    return new AuthService(secretKey, issuer, audience);
-//});
-builder.Services.Configure<AzureAdOptions>(builder.Configuration.GetSection("AzureAd"));
 builder.Services.AddScoped<IAuthService>(provider =>
 {
-    var options = provider.GetRequiredService<IOptions<AzureAdOptions>>();
-    return new AuthServiceWithAad(options, secretKey, issuer, audience);
+    return new AuthService(secretKey, issuer, audience);
 });
+builder.Services.Configure<AzureAdOptions>(builder.Configuration.GetSection("AzureAd"));
+//builder.Services.AddScoped<IAuthService>(provider =>
+//{
+//    var options = provider.GetRequiredService<IOptions<AzureAdOptions>>();
+//    return new AuthServiceWithAad(options, secretKey, issuer, audience);
+//});
 
 
 builder.Services.AddControllers();
@@ -41,19 +47,19 @@ builder.Services.AddEndpointsApiExplorer();
 
 
 
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//    .AddJwtBearer(options =>
-//    {
-//        options.TokenValidationParameters = new TokenValidationParameters
-//        {
-//            ValidateIssuer = false,
-//            ValidateAudience = false,
-//            ValidateIssuerSigningKey = true,
-//            ValidIssuer = issuer,
-//            ValidAudience = audience,
-//            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey.PadRight(32, '0')))
-//    };
-//    });
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = issuer,
+            ValidAudience = audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey.PadRight(32, '0')))
+        };
+    });
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -93,8 +99,6 @@ connection = builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRI
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connection, b => b.MigrationsAssembly("Repositories")));
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-       .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
 var app = builder.Build();
 app.UseSwagger();

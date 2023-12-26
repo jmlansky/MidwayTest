@@ -38,9 +38,9 @@ namespace Auth
         public async Task<string> GenerateJwtTokenAsync(string username)
         {
             var app = ConfidentialClientApplicationBuilder
-                .Create(_clientId)
-                .WithClientSecret(_clientSecret)
-                .WithAuthority(AzureCloudInstance.AzurePublic, _tenantId)
+            .Create(_clientId)
+            .WithClientSecret(_clientSecret)
+            .WithAuthority(AzureCloudInstance.AzurePublic, _tenantId)
             .Build();
 
             var result = await app.AcquireTokenForClient(_scopes).ExecuteAsync();
@@ -61,6 +61,7 @@ namespace Auth
             //    expires: expires,
             //    signingCredentials: credentials
             //);
+
 
             //return jwtTokenHandler.WriteToken(newJwtToken);
         }
