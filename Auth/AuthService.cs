@@ -28,7 +28,12 @@ namespace Auth
             }
             return false;
         }
-
+        
+        public Task<bool> ValidateCredentialsAsync(string username, string password)
+        {
+            throw new NotImplementedException();
+        }
+        
         public string GenerateJwtToken(string username)
         {
             var claims = new List<Claim>
@@ -50,5 +55,12 @@ namespace Auth
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        public Task<string> GenerateJwtTokenAsync(string username)
+        {
+            throw new NotImplementedException();
+        }
+
+        
     }
 }

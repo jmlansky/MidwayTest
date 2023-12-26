@@ -17,7 +17,7 @@ namespace Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
         {
             var isValid = _authService.ValidateCredentials(request.Username, request.Password);
 
@@ -26,7 +26,7 @@ namespace Api.Controllers
                 return Unauthorized();
             }
 
-            var token = _authService.GenerateJwtToken(request.Username);
+            var token = await _authService.GenerateJwtTokenAsync(request.Username);
 
             return Ok(new { token });
         }
